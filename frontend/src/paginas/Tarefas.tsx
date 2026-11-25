@@ -4,6 +4,7 @@ import type { Filtros as ValorFiltros, Tarefa } from '../api/tarefas'
 import { useAviso } from '../componentes/Aviso'
 import { Bib, type Prioridade, type Status } from '../componentes/Bib'
 import { AvisoErro, Botao } from '../componentes/ui'
+import { AcoesTarefa } from '../tarefas/AcoesTarefa'
 import { useListaTarefas } from '../tarefas/consultas'
 import { Filtros } from '../tarefas/Filtros'
 import { FormTarefa } from '../tarefas/FormTarefa'
@@ -65,6 +66,10 @@ export function Tarefas() {
     setEditando(null)
     setFormAberto(true)
   }
+  const abrirEdicao = (tarefa: Tarefa) => {
+    setEditando(tarefa)
+    setFormAberto(true)
+  }
 
   const dados = consulta.data
   const total = dados?.totalItens ?? 0
@@ -122,6 +127,7 @@ export function Tarefas() {
                     prazo={tarefa.prazo}
                     atrasada={tarefa.atrasada}
                     className="h-full"
+                    acoes={<AcoesTarefa tarefa={tarefa} aoEditar={() => abrirEdicao(tarefa)} aoAvisar={avisar} />}
                   />
                 </li>
               ))}

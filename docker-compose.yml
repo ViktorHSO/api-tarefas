@@ -1,0 +1,33 @@
+# Sobe o MySQL e a API: docker compose up --build
+# Antes, copie o .env.example para .env e preencha o JWT_SECRET.
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: tarefas
+      MYSQL_USER: tarefas
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-senha_local_tarefas}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-senha_root_local}
+    volumes:
+      - dados_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-senha_root_local}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: jdbc:mysql://db:3306/tarefas
+      DATABASE_USERNAME: tarefas
+      DATABASE_PASSWORD: ${MYSQL_PASSWORD:-senha_local_tarefas}
+      JWT_SECRET: ${JWT_SECRET:?Defina o JWT_SECRET no arquivo .env}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  dados_mysql:

@@ -75,6 +75,27 @@
   }
 }
 
+/* Movimento em resposta a uma ação: o painel de tarefa entra pela direita e o aviso sobe. */
+@keyframes entrar-painel {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes entrar-aviso {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

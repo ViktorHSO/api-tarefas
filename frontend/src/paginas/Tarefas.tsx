@@ -1,10 +1,12 @@
-import { useCallback, useMemo, type ReactNode } from 'react'
+import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
-import type { Filtros as ValorFiltros } from '../api/tarefas'
+import type { Filtros as ValorFiltros, Tarefa } from '../api/tarefas'
+import { useAviso } from '../componentes/Aviso'
 import { Bib, type Prioridade, type Status } from '../componentes/Bib'
 import { AvisoErro, Botao } from '../componentes/ui'
 import { useListaTarefas } from '../tarefas/consultas'
 import { Filtros } from '../tarefas/Filtros'
+import { FormTarefa } from '../tarefas/FormTarefa'
 import { Paginacao } from '../tarefas/Paginacao'
 
 /** Os filtros ficam na URL: dá para recarregar ou compartilhar a página sem perder a busca. */
@@ -54,6 +56,15 @@ function useFiltrosNaUrl() {
 export function Tarefas() {
   const { filtros, pagina, mudarFiltros, mudarPagina, temFiltro } = useFiltrosNaUrl()
   const consulta = useListaTarefas(filtros, pagina)
+  const { avisar, elemento: aviso } = useAviso()
+
+  const [formAberto, setFormAberto] = useState(false)
+  const [editando, setEditando] = useState<Tarefa | null>(null)
+
+  const abrirNova = () => {
+    setEditando(null)
+    setFormAberto(true)
+  }
 
   const dados = consulta.data
   const total = dados?.totalItens ?? 0
@@ -67,6 +78,9 @@ export function Tarefas() {
             {dados ? `${total} ${total === 1 ? 'tarefa' : 'tarefas'}${temFiltro ? ' com esses filtros' : ''}` : ''}
           </p>
         </div>
+        <Botao onClick={abrirNova} className="self-start px-8 py-4 text-lg sm:self-auto">
+          Nova tarefa
+        </Botao>
       </div>
 
       <div className="mt-8">
@@ -91,7 +105,9 @@ export function Tarefas() {
               </Botao>
             </Vazio>
           ) : (
-            <Vazio titulo="Pista livre" texto="Você não tem nenhuma tarefa. Quando criar a primeira, ela aparece aqui com o número dela." />
+            <Vazio titulo="Pista livre" texto="Você não tem nenhuma tarefa. Crie a primeira e ela aparece aqui com o número dela.">
+              <Botao onClick={abrirNova}>Criar primeira tarefa</Botao>
+            </Vazio>
           )
         ) : (
           <>
@@ -115,16 +131,26 @@ export function Tarefas() {
         )}
       </div>
 
+      <FormTarefa
+        aberto={formAberto}
+        tarefa={editando}
+        aoFechar={() => setFormAberto(false)}
+        aoSalvar={(mensagem) => {
+          setFormAberto(false)
+          avisar(mensagem)
+        }}
+      />
+      {aviso}
     </section>
   )
 }
 
-function Vazio({ titulo, texto, children }: { titulo: string; texto: string; children?: ReactNode }) {
+function Vazio({ titulo, texto, children }: { titulo: string; texto: string; children: ReactNode }) {
   return (
     <div className="border-2 border-dashed border-tinta px-6 py-16 text-center">
       <h2 className="titulo text-[clamp(3.5rem,8vw,6rem)]">{titulo}</h2>
       <p className="mx-auto mt-4 max-w-[30rem] text-lg text-grafite">{texto}</p>
-      {children && <div className="mt-8 flex justify-center">{children}</div>}
+      <div className="mt-8 flex justify-center">{children}</div>
     </div>
   )
 }

@@ -54,7 +54,7 @@ jobs:
       - name: Cria o .env com uma chave temporária
         run: echo "JWT_SECRET=$(openssl rand -hex 32)" > .env
 
-      - name: Sobe o MySQL e a API
+      - name: Sobe o MySQL, a API e o site
         run: docker compose up -d --build --wait
 
       - name: Testa o fluxo completo na API
@@ -70,6 +70,12 @@ jobs:
           curl -fs -X POST http://localhost:8080/tarefas -H "Authorization: Bearer $TOKEN" \
             -H 'Content-Type: application/json' -d '{"titulo":"Tarefa do CI","prioridade":"ALTA"}'
           curl -fs http://localhost:8080/tarefas -H "Authorization: Bearer $TOKEN" | grep -q 'Tarefa do CI'
+
+      - name: Confere o site e o repasse de /api pelo nginx
+        run: |
+          curl -fs http://localhost:3000/ | grep -q '<div id="root">'
+          curl -fs http://localhost:3000/tarefas | grep -q '<div id="root">'
+          curl -fs http://localhost:3000/api/actuator/health | grep -q UP
 
       - name: Logs em caso de erro
         if: failure()

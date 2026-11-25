@@ -1,0 +1,4 @@
+# O mvnw precisa de quebra de linha LF para rodar no Linux (CI e Docker),
+# mesmo quando o repositório é clonado no Windows.
+mvnw text eol=lf
+*.cmd text eol=crlf

@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: api-tarefas
+  datasource:
+    # Sem DATABASE_URL a API sobe com um H2 em memória (bom para testar rápido).
+    # Com Docker Compose ela usa o MySQL.
+    url: ${DATABASE_URL:jdbc:h2:mem:tarefas;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none # o esquema do banco é responsabilidade do Flyway
+  data:
+    web:
+      pageable:
+        max-page-size: 50
+  mvc:
+    problemdetails:
+      enabled: true
+
+app:
+  jwt:
+    # Em produção, defina JWT_SECRET com pelo menos 32 caracteres aleatórios.
+    secret: ${JWT_SECRET:chave-de-desenvolvimento-troque-em-producao-0123456789}
+    expiracao-minutos: ${JWT_EXPIRACAO_MINUTOS:60}
+  fuso-horario: America/Sao_Paulo
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

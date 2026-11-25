@@ -17,9 +17,10 @@ describe('número de peito (Bib)', () => {
     expect(screen.getByText('Venceu em 20 nov')).toBeInTheDocument()
   })
 
-  it('tarefa concluída mostra "Concluída" no lugar do prazo', () => {
+  it('mostra o status no topo do número de peito', () => {
     render(<Bib numero={3} titulo="Ler" prioridade="BAIXA" status="CONCLUIDA" prazo="2026-11-20" />)
 
     expect(screen.getByText('Concluída')).toBeInTheDocument()
+    expect(screen.getByText('Até 20 nov')).toBeInTheDocument()
   })
 })

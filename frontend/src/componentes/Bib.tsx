@@ -4,6 +4,12 @@ import { diaMes, numeroDePeito } from './formatos'
 export type Prioridade = 'BAIXA' | 'MEDIA' | 'ALTA'
 export type Status = 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA'
 
+const NOME_STATUS: Record<Status, string> = {
+  PENDENTE: 'Pendente',
+  EM_ANDAMENTO: 'Em andamento',
+  CONCLUIDA: 'Concluída',
+}
+
 const NOME_PRIORIDADE: Record<Prioridade, string> = {
   BAIXA: 'Prioridade baixa',
   MEDIA: 'Prioridade média',
@@ -45,9 +51,13 @@ export function Bib({ numero, titulo, prioridade, status, prazo, atrasada = fals
       <Furo className="left-3 top-7" />
       <Furo className="right-3 top-7" />
 
-      <div className="flex flex-1 flex-col px-6 pb-7 pt-5">
+      <div className="flex flex-1 flex-col px-6 pb-7 pt-3">
+        <p className={`text-center text-sm font-semibold ${status === 'EM_ANDAMENTO' ? 'text-tinta' : 'text-grafite'}`}>
+          {status === 'EM_ANDAMENTO' && <span aria-hidden="true" className="mr-1.5 inline-block size-2 bg-tinta align-middle" />}
+          {NOME_STATUS[status]}
+        </p>
         <p
-          className={`titulo text-center text-[clamp(4.5rem,9vw,6.5rem)] ${concluida ? 'text-transparent [-webkit-text-stroke:2px_var(--color-tinta)]' : ''}`}
+          className={`titulo mt-1 text-center text-[clamp(4.5rem,9vw,6.5rem)] ${concluida ? 'text-transparent [-webkit-text-stroke:2px_var(--color-tinta)]' : ''}`}
         >
           {numeroDePeito(numero)}
         </p>
@@ -64,7 +74,7 @@ export function Bib({ numero, titulo, prioridade, status, prazo, atrasada = fals
           <div className="text-right">
             <dt className="sr-only">Prazo</dt>
             <dd className={atrasada ? 'font-bold text-pista' : 'text-grafite'}>
-              {concluida ? 'Concluída' : prazo ? (atrasada ? `Venceu em ${diaMes(prazo)}` : `Até ${diaMes(prazo)}`) : 'Sem prazo'}
+              {prazo ? (atrasada ? `Venceu em ${diaMes(prazo)}` : `Até ${diaMes(prazo)}`) : 'Sem prazo'}
             </dd>
           </div>
         </dl>

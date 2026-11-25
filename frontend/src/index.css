@@ -1,0 +1,86 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/archivo/standard.css';
+
+/*
+  Identidade visual
+  - Uma família só (Archivo variável), usada em duas larguras:
+    extra condensada e pesada nos títulos, normal no texto.
+  - Preto e branco puros, cinza concreto nas superfícies e o laranja
+    da pista de atletismo só para o que pede atenção: prioridade alta e atraso.
+*/
+@theme {
+  --font-sans: 'Archivo Variable', 'Arial Narrow', Arial, sans-serif;
+
+  --color-papel: #ffffff;
+  --color-tinta: #000000;
+  --color-concreto: #ededea;
+  --color-grafite: #5c5c58;
+  --color-pista: #d9481c;
+}
+
+@layer base {
+  html {
+    background: var(--color-papel);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-tinta);
+    color: var(--color-papel);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-pista);
+    outline-offset: 3px;
+  }
+}
+
+@utility titulo {
+  font-stretch: 62%;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+@utility condensado {
+  font-stretch: 75%;
+}
+
+/* Única animação automática: as linhas do título da página inicial sobem ao carregar. */
+@keyframes subir-linha {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@utility linha-revelada {
+  display: block;
+  overflow: hidden;
+  /* folga para acentos e cedilha não serem cortados pela máscara */
+  padding-block: 0.09em;
+  margin-block: -0.09em;
+  & > span {
+    display: block;
+    animation: subir-linha 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,4 +1,4 @@
-import { useId, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from 'react'
+import { useId, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from 'react'
 import { Link } from 'react-router'
 
 const BASE_BOTAO =
@@ -44,22 +44,41 @@ type PropsCampo = InputHTMLAttributes<HTMLInputElement> & {
   dica?: string
 }
 
-/** Campo com rótulo, dica e mensagem de erro ligados ao input para leitores de tela. */
-export function Campo({ rotulo, erro, dica, className = '', ...props }: PropsCampo) {
+/**
+ * Campo com rótulo, dica e mensagem de erro ligados ao input para leitores de tela.
+ * Campos de senha ganham um botão para mostrar e esconder o que foi digitado.
+ */
+export function Campo({ rotulo, erro, dica, className = '', type, ...props }: PropsCampo) {
   const id = useId()
   const idAjuda = `${id}-ajuda`
+  const senha = type === 'password'
+  const [mostrar, setMostrar] = useState(false)
   return (
     <div className={className}>
       <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
         {rotulo}
       </label>
-      <input
-        id={id}
-        aria-invalid={erro ? true : undefined}
-        aria-describedby={erro || dica ? idAjuda : undefined}
-        className={`w-full border-2 bg-papel px-3.5 py-3 text-base outline-none placeholder:text-grafite/70 focus:border-tinta focus-visible:outline-3 focus-visible:outline-offset-2 ${erro ? 'border-pista' : 'border-tinta'}`}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          id={id}
+          type={senha && mostrar ? 'text' : type}
+          aria-invalid={erro ? true : undefined}
+          aria-describedby={erro || dica ? idAjuda : undefined}
+          className={`w-full border-2 bg-papel px-3.5 py-3 text-base outline-none placeholder:text-grafite/70 focus:border-tinta focus-visible:outline-3 focus-visible:outline-offset-2 ${senha ? 'pr-24' : ''} ${erro ? 'border-pista' : 'border-tinta'}`}
+          {...props}
+        />
+        {senha && (
+          <button
+            type="button"
+            onClick={() => setMostrar((m) => !m)}
+            aria-pressed={mostrar}
+            aria-label={`${mostrar ? 'Esconder' : 'Mostrar'} ${rotulo.toLowerCase()}`}
+            className="absolute inset-y-0 right-0 px-4 text-sm font-semibold underline-offset-4 hover:underline"
+          >
+            {mostrar ? 'Esconder' : 'Mostrar'}
+          </button>
+        )}
+      </div>
       {(erro || dica) && (
         <p id={idAjuda} className={`mt-1.5 text-sm ${erro ? 'font-semibold text-pista' : 'text-grafite'}`}>
           {erro ?? dica}

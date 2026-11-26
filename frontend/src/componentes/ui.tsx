@@ -1,4 +1,13 @@
-import { useId, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from 'react'
+import {
+  useEffect,
+  useEffectEvent,
+  useId,
+  useRef,
+  type ButtonHTMLAttributes,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type TextareaHTMLAttributes,
+} from 'react'
 import { Link } from 'react-router'
 
 const BASE_BOTAO =
@@ -38,6 +47,9 @@ export function BotaoLink({
   )
 }
 
+const BASE_CAMPO =
+  'w-full border-2 bg-papel px-3.5 py-3 text-base outline-none placeholder:text-grafite/70 focus:border-tinta focus-visible:outline-3 focus-visible:outline-offset-2'
+
 type PropsCampo = InputHTMLAttributes<HTMLInputElement> & {
   rotulo: string
   erro?: string
@@ -57,7 +69,7 @@ export function Campo({ rotulo, erro, dica, className = '', ...props }: PropsCam
         id={id}
         aria-invalid={erro ? true : undefined}
         aria-describedby={erro || dica ? idAjuda : undefined}
-        className={`w-full border-2 bg-papel px-3.5 py-3 text-base outline-none placeholder:text-grafite/70 focus:border-tinta focus-visible:outline-3 focus-visible:outline-offset-2 ${erro ? 'border-pista' : 'border-tinta'}`}
+        className={`${BASE_CAMPO} ${erro ? 'border-pista' : 'border-tinta'}`}
         {...props}
       />
       {(erro || dica) && (
@@ -65,6 +77,108 @@ export function Campo({ rotulo, erro, dica, className = '', ...props }: PropsCam
           {erro ?? dica}
         </p>
       )}
+    </div>
+  )
+}
+
+type PropsCampoTexto = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  rotulo: string
+  erro?: string
+  dica?: string
+}
+
+/** Versão de várias linhas do Campo (descrição da tarefa). */
+export function CampoTexto({ rotulo, erro, dica, className = '', ...props }: PropsCampoTexto) {
+  const id = useId()
+  const idAjuda = `${id}-ajuda`
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
+        {rotulo}
+      </label>
+      <textarea
+        id={id}
+        aria-invalid={erro ? true : undefined}
+        aria-describedby={erro || dica ? idAjuda : undefined}
+        className={`${BASE_CAMPO} min-h-28 resize-y ${erro ? 'border-pista' : 'border-tinta'}`}
+        {...props}
+      />
+      {(erro || dica) && (
+        <p id={idAjuda} className={`mt-1.5 text-sm ${erro ? 'font-semibold text-pista' : 'text-grafite'}`}>
+          {erro ?? dica}
+        </p>
+      )}
+    </div>
+  )
+}
+
+const FOCAVEIS = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+/**
+ * Janela modal acessível: prende o foco dentro dela, fecha com Esc ou clicando fora
+ * e devolve o foco para quem a abriu.
+ */
+export function Modal({ titulo, aoFechar, children }: { titulo: string; aoFechar: () => void; children: ReactNode }) {
+  const idTitulo = useId()
+  const caixa = useRef<HTMLDivElement>(null)
+  const fechar = useEffectEvent(aoFechar)
+
+  useEffect(() => {
+    const anterior = document.activeElement as HTMLElement | null
+    const primeiro = caixa.current?.querySelector<HTMLElement>('[data-autofoco]') ?? caixa.current?.querySelector<HTMLElement>(FOCAVEIS)
+    primeiro?.focus()
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    function teclado(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        fechar()
+        return
+      }
+      if (e.key !== 'Tab' || !caixa.current) return
+      const focaveis = Array.from(caixa.current.querySelectorAll<HTMLElement>(FOCAVEIS))
+      if (focaveis.length === 0) return
+      const [inicio, fim] = [focaveis[0], focaveis[focaveis.length - 1]]
+      if (e.shiftKey && document.activeElement === inicio) {
+        e.preventDefault()
+        fim.focus()
+      } else if (!e.shiftKey && document.activeElement === fim) {
+        e.preventDefault()
+        inicio.focus()
+      }
+    }
+
+    document.addEventListener('keydown', teclado)
+    return () => {
+      document.removeEventListener('keydown', teclado)
+      document.body.style.overflow = overflow
+      anterior?.focus()
+    }
+  }, [])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-tinta/55 sm:items-center sm:p-6"
+      onMouseDown={(e) => e.target === e.currentTarget && aoFechar()}
+    >
+      <div
+        ref={caixa}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={idTitulo}
+        className="max-h-[92dvh] w-full max-w-[34rem] overflow-y-auto border-2 border-tinta bg-papel"
+      >
+        <div className="flex items-start justify-between gap-4 border-b-2 border-tinta px-6 py-5">
+          <h2 id={idTitulo} className="titulo text-5xl">
+            {titulo}
+          </h2>
+          <button type="button" onClick={aoFechar} aria-label="Fechar" className="-mr-1 -mt-1 p-1 text-3xl leading-none">
+            ×
+          </button>
+        </div>
+        <div className="px-6 py-6">{children}</div>
+      </div>
     </div>
   )
 }

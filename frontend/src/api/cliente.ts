@@ -50,10 +50,16 @@ export async function requisicao<T>(caminho: string, { metodo = 'GET', corpo, au
 
   if (!resposta.ok) {
     const problema = await resposta.json().catch(() => ({}))
+    // Sem Problem Details na resposta e status 5xx: quem respondeu não foi a API
+    // (ela está fora do ar ou ainda subindo, e o proxy devolveu o erro).
+    const semResposta = !problema.detail && resposta.status >= 500
     throw new ErroApi(
       resposta.status,
-      problema.title ?? 'Erro',
-      problema.detail ?? 'Algo deu errado no servidor. Tente de novo em instantes.',
+      problema.title ?? (semResposta ? 'Sem resposta' : 'Erro'),
+      problema.detail ??
+        (semResposta
+          ? 'A API não respondeu. Confira se ela está rodando e tente de novo.'
+          : 'Algo deu errado no servidor. Tente de novo em instantes.'),
       problema.erros ?? {},
     )
   }

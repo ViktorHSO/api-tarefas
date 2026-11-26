@@ -7,6 +7,7 @@ import { Entrar } from './paginas/Entrar'
 import { Inicio } from './paginas/Inicio'
 import { LayoutApp } from './paginas/LayoutApp'
 import { NaoEncontrada } from './paginas/NaoEncontrada'
+import { Painel } from './paginas/Painel'
 import { Tarefas } from './paginas/Tarefas'
 
 const clienteConsultas = new QueryClient({
@@ -24,6 +25,7 @@ export function Rotas() {
       <Route element={<RotaProtegida />}>
         <Route element={<LayoutApp />}>
           <Route path="/tarefas" element={<Tarefas />} />
+          <Route path="/painel" element={<Painel />} />
         </Route>
       </Route>
       <Route path="*" element={<NaoEncontrada />} />

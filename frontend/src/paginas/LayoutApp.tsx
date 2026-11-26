@@ -2,7 +2,10 @@ import { NavLink, Outlet } from 'react-router'
 import { useAuth } from '../auth/contexto'
 import { Marca } from '../componentes/ui'
 
-const LINKS = [{ para: '/tarefas', nome: 'Tarefas' }]
+const LINKS = [
+  { para: '/tarefas', nome: 'Tarefas' },
+  { para: '/painel', nome: 'Painel' },
+]
 
 /** Estrutura da área logada: cabeçalho fixo com navegação e o conteúdo da página. */
 export function LayoutApp() {

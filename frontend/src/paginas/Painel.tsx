@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import type { Resumo, Tarefa } from '../api/tarefas'
 import { diaMes, numeroDePeito } from '../componentes/formatos'
+import { LinhaDeChegada, PistaDeAtletismo } from '../componentes/Ilustracoes'
 import { AvisoErro, BotaoLink } from '../componentes/ui'
 import { useAtrasadas, useResumo } from '../api/consultasTarefas'
 
@@ -15,12 +16,14 @@ export function Painel() {
 
   if (total === 0) {
     return (
-      <section>
+      <section className="relative isolate">
+        <PistaDeAtletismo className="pointer-events-none absolute -right-40 -top-10 -z-10 hidden w-[56rem] max-w-none text-concreto md:block" />
         <h1 className="titulo text-[clamp(4rem,11vw,9rem)]">Nada na pista ainda</h1>
         <p className="mt-6 max-w-[34rem] text-lg text-grafite">Crie suas tarefas e o painel mostra quanto já cruzou a linha de chegada.</p>
         <BotaoLink para="/tarefas" className="mt-8">
           Ir para as tarefas
         </BotaoLink>
+        <LinhaDeChegada className="mt-16 text-tinta" />
       </section>
     )
   }

@@ -139,6 +139,29 @@ mvnw test                  # Windows (Mac/Linux: ./mvnw test)
 cd frontend && npm test    # testes do front-end
 ```
 
+## ☁️ Deploy
+
+O projeto roda de graça com três peças:
+
+| Parte | Onde | Por quê |
+|---|---|---|
+| Banco | [TiDB Cloud Starter](https://tidbcloud.com) | Compatível com MySQL: o Flyway cria as tabelas sem mudar nada |
+| API | [Render](https://render.com), serviço web com Docker | Usa o mesmo `Dockerfile` do Docker Compose |
+| Site | Render, site estático | O `/api` é repassado para a API, como no nginx e no Vite (sem CORS) |
+
+Tudo isso está descrito no [`render.yaml`](render.yaml).
+
+1. **Banco:** crie um cluster *Starter* no TiDB Cloud. Em **Connect**, gere a senha e anote o host, o usuário (`xxxx.root`) e a senha.
+2. **Render:** em **New → Blueprint**, escolha este repositório. O Render lê o `render.yaml` e pede três valores:
+   - `DATABASE_URL`: `jdbc:mysql://HOST:4000/tarefas?sslMode=VERIFY_IDENTITY&createDatabaseIfNotExist=true`
+   - `DATABASE_USERNAME`: o usuário do TiDB
+   - `DATABASE_PASSWORD`: a senha do TiDB
+
+   O `JWT_SECRET` é gerado pelo próprio Render.
+3. Espere os dois serviços ficarem no ar. Se o Render der à API um endereço diferente de `api-tarefas-viktorhso.onrender.com`, troque o destino da regra `/api/*` no `render.yaml` (ou em **Redirects/Rewrites** no painel do site).
+
+> No plano gratuito a API dorme depois de 15 minutos sem uso e leva cerca de um minuto para acordar. O site já chama a API assim que abre, para adiantar essa espera.
+
 ## 📌 Endpoints
 
 🔒 = exige o cabeçalho `Authorization: Bearer <token>`
@@ -206,7 +229,7 @@ Resposta de erro de validação:
 - [ ] Refresh token
 - [ ] Etiquetas (tags) para agrupar tarefas
 - [ ] Testes com MySQL via Testcontainers
-- [ ] Deploy
+- [x] Deploy
 
 ## 👤 Autor
 

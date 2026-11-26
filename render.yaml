@@ -1,0 +1,52 @@
+# Blueprint do Render: cria a API e o site a partir deste repositório.
+# No painel do Render: New → Blueprint → escolha este repositório.
+# O banco é um MySQL externo (TiDB Cloud Starter); veja "Deploy" no README.
+services:
+  # API Spring Boot, construída pelo Dockerfile da raiz
+  - type: web
+    name: api-tarefas-viktorhso
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      # Pedidos pelo Render na criação: copie do painel do TiDB Cloud
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      # Gerado pelo próprio Render, nunca aparece no repositório
+      - key: JWT_SECRET
+        generateValue: true
+      # A instância gratuita tem 512 MB: limita o Java para caber e subir mais rápido
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=70 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xss512k
+
+  # Site em React, servido como arquivos estáticos
+  - type: web
+    name: tarefas-viktorhso
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+    routes:
+      # Mesmo esquema do nginx e do Vite: /api/... vai para a API, sem CORS.
+      # Se o Render der outro endereço para a API, troque aqui (ou em Redirects/Rewrites no painel).
+      - type: rewrite
+        source: /api/*
+        destination: https://api-tarefas-viktorhso.onrender.com/*
+      # O React Router cuida das rotas: qualquer outro caminho abre o index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable

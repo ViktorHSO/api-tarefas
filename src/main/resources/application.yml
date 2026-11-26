@@ -1,3 +1,9 @@
+server:
+  # O Render (e outros serviços de hospedagem) informa a porta pela variável PORT.
+  port: ${PORT:8080}
+  # Atrás de um proxy com HTTPS, usa os cabeçalhos X-Forwarded-* para montar as URLs certas (Swagger).
+  forward-headers-strategy: framework
+
 spring:
   application:
     name: api-tarefas

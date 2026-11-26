@@ -2,6 +2,15 @@ import { lerSessao } from '../auth/sessao'
 
 const BASE = import.meta.env.VITE_API_URL ?? '/api'
 
+/**
+ * Chama o health check só para "acordar" a API. Na hospedagem gratuita ela dorme depois
+ * de um tempo sem uso e leva quase um minuto para voltar: começar isso assim que o site
+ * abre adianta a espera enquanto a pessoa ainda está lendo a página ou digitando o login.
+ */
+export function acordarApi() {
+  fetch(`${BASE}/actuator/health`).catch(() => {})
+}
+
 /** Evento disparado quando a API recusa o token (expirado ou inválido). */
 export const EVENTO_SESSAO_EXPIRADA = 'sessao-expirada'
 

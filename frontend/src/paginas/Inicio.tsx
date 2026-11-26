@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { Bib } from '../componentes/Bib'
+import { LinhaDeChegada, PistaDeAtletismo } from '../componentes/Ilustracoes'
 import { BotaoLink, Marca } from '../componentes/ui'
 
 const LINHAS = ['Termine', 'o que você', 'começou.']
@@ -27,32 +28,39 @@ export function Inicio() {
       </header>
 
       <main>
-        <section className="mx-auto max-w-[90rem] px-5 pb-16 pt-6 sm:px-8 lg:pb-24">
-          <h1 className="titulo text-[clamp(4rem,20.5vw,19.5rem)]">
-            {LINHAS.map((linha, i) => (
-              <span key={linha} className="linha-revelada">
-                <span style={{ animationDelay: `${i * 90}ms` }}>{linha}</span>
-              </span>
-            ))}
-          </h1>
+        <section className="relative isolate overflow-hidden">
+          {/* A pista fica atrás do título e se move mais devagar que a página ao rolar (paralaxe). */}
+          <div aria-hidden="true" className="paralaxe pointer-events-none absolute inset-0 -z-10 [--velocidade:0.45]">
+            <PistaDeAtletismo className="absolute -right-[18rem] top-6 w-[72rem] max-w-none text-concreto sm:-right-40 lg:right-[-6rem] lg:top-0 lg:w-[88rem]" />
+          </div>
+          <div className="mx-auto max-w-[90rem] px-5 pb-16 pt-6 sm:px-8 lg:pb-24">
+            <h1 className="titulo text-[clamp(4rem,20.5vw,19.5rem)]">
+              {LINHAS.map((linha, i) => (
+                <span key={linha} className="linha-revelada">
+                  <span style={{ animationDelay: `${i * 90}ms` }}>{linha}</span>
+                </span>
+              ))}
+            </h1>
 
-          <div className="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-[1fr_auto] lg:items-end">
-            <p className="max-w-[38rem] text-xl leading-8 sm:text-2xl sm:leading-9">
-              Organize suas tarefas por prioridade e prazo, veja na hora o que atrasou e acompanhe o que já cruzou a linha
-              de chegada.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <BotaoLink para="/criar-conta" className="px-8 py-4 text-lg">
-                Criar conta grátis
-              </BotaoLink>
-              <BotaoLink para="/entrar" variante="secundario" className="px-8 py-4 text-lg">
-                Já tenho conta
-              </BotaoLink>
+            <div className="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-[1fr_auto] lg:items-end">
+              <p className="max-w-[38rem] text-xl leading-8 sm:text-2xl sm:leading-9">
+                Organize suas tarefas por prioridade e prazo, veja na hora o que atrasou e acompanhe o que já cruzou a linha
+                de chegada.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <BotaoLink para="/criar-conta" className="px-8 py-4 text-lg">
+                  Criar conta grátis
+                </BotaoLink>
+                <BotaoLink para="/entrar" variante="secundario" className="px-8 py-4 text-lg">
+                  Já tenho conta
+                </BotaoLink>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="border-y-2 border-tinta bg-concreto">
+        <LinhaDeChegada className="text-tinta" />
+        <section className="border-b-2 border-tinta bg-concreto">
           <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[minmax(0,26rem)_1fr] lg:py-24">
             <div>
               <h2 className="titulo text-[clamp(3.5rem,7vw,6rem)]">Cada tarefa ganha um número</h2>
@@ -63,14 +71,21 @@ export function Inicio() {
             </div>
 
             <ul className="grid gap-6 sm:grid-cols-3 sm:gap-5" aria-label="Exemplos de tarefas">
+              {/* Cada número de peito rola numa velocidade diferente (paralaxe). */}
               <li className="sm:-rotate-2 sm:translate-y-6">
-                <Bib numero={27} titulo="Entregar o relatório do estágio" prioridade="ALTA" status="PENDENTE" prazo={diasAPartirDeHoje(3)} />
+                <div className="paralaxe [--velocidade:0.5]">
+                  <Bib numero={27} titulo="Entregar o relatório do estágio" prioridade="ALTA" status="PENDENTE" prazo={diasAPartirDeHoje(3)} />
+                </div>
               </li>
               <li className="sm:rotate-1">
-                <Bib numero={114} titulo="Treino de corrida, 8 km" prioridade="MEDIA" status="EM_ANDAMENTO" prazo={diasAPartirDeHoje(-2)} atrasada />
+                <div className="paralaxe [--velocidade:-0.35]">
+                  <Bib numero={114} titulo="Treino de corrida, 8 km" prioridade="MEDIA" status="EM_ANDAMENTO" prazo={diasAPartirDeHoje(-2)} atrasada />
+                </div>
               </li>
               <li className="sm:-rotate-1 sm:translate-y-10">
-                <Bib numero={9} titulo="Renovar a carteira de motorista" prioridade="BAIXA" status="CONCLUIDA" />
+                <div className="paralaxe [--velocidade:0.9]">
+                  <Bib numero={9} titulo="Renovar a carteira de motorista" prioridade="BAIXA" status="CONCLUIDA" />
+                </div>
               </li>
             </ul>
           </div>

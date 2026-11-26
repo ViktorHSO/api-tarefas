@@ -16,6 +16,11 @@
 </p>
 
 <p align="center">
+  <a href="https://tarefas-viktorhso.onrender.com"><strong>🌐 Ver o site no ar</strong></a> ·
+  <a href="https://api-tarefas-viktorhso.onrender.com/swagger-ui.html">📑 Documentação da API (Swagger)</a>
+</p>
+
+<p align="center">
   <a href="https://github.com/ViktorHSO/api-tarefas/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/ViktorHSO/api-tarefas/ci.yml?branch=main&style=for-the-badge&label=CI" alt="CI" /></a>
 </p>
 
@@ -150,6 +155,11 @@ O projeto roda de graça com três peças:
 | Site | Render, site estático | O `/api` é repassado para a API, como no nginx e no Vite (sem CORS) |
 
 Tudo isso está descrito no [`render.yaml`](render.yaml).
+
+No ar:
+
+- Site: https://tarefas-viktorhso.onrender.com
+- API: https://api-tarefas-viktorhso.onrender.com (documentação em `/swagger-ui.html`)
 
 1. **Banco:** crie um cluster *Starter* no TiDB Cloud. Em **Connect**, gere a senha e anote o host, o usuário (`xxxx.root`) e a senha.
 2. **Render:** em **New → Blueprint**, escolha este repositório. O Render lê o `render.yaml` e pede três valores:

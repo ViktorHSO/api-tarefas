@@ -7,6 +7,7 @@ import { useAuth } from '../auth/contexto'
 import { Bib, type Prioridade, type Status } from '../componentes/Bib'
 import { FormularioTarefa } from '../componentes/FormularioTarefa'
 import { numeroDePeito } from '../componentes/formatos'
+import { IconeBandeira, IconeBusca, IconeMais, LinhaDeChegada } from '../componentes/Ilustracoes'
 import { Placar, type Recorte } from '../componentes/Placar'
 import { AvisoErro, Botao, Modal } from '../componentes/ui'
 
@@ -159,7 +160,8 @@ export function Tarefas() {
           )}
         </div>
         <Botao onClick={() => setEditando('nova')} className="px-7 py-4 text-lg">
-          + Nova tarefa
+          <IconeMais />
+          Nova tarefa
         </Botao>
       </div>
 
@@ -172,14 +174,17 @@ export function Tarefas() {
           <label htmlFor="busca" className="mb-1.5 block text-sm font-semibold">
             Buscar pelo título
           </label>
-          <input
-            id="busca"
-            type="search"
-            value={textoBusca}
-            onChange={(e) => setTextoBusca(e.target.value)}
-            placeholder="Digite parte do título"
-            className="w-full border-2 border-tinta bg-papel px-3.5 py-3 text-base outline-none placeholder:text-grafite/70"
-          />
+          <div className="relative">
+            <IconeBusca className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-grafite" />
+            <input
+              id="busca"
+              type="search"
+              value={textoBusca}
+              onChange={(e) => setTextoBusca(e.target.value)}
+              placeholder="Digite parte do título"
+              className="w-full border-2 border-tinta bg-papel py-3 pl-11 pr-3.5 text-base outline-none placeholder:text-grafite/70"
+            />
+          </div>
         </div>
         <Seletor
           rotulo="Prioridade"
@@ -368,10 +373,14 @@ function Seletor({
 
 function Vazio({ titulo, texto, acao }: { titulo: string; texto: string; acao: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-start border-2 border-dashed border-tinta px-6 py-12 sm:px-10">
-      <h2 className="titulo text-[clamp(3rem,7vw,5rem)]">{titulo}</h2>
-      <p className="mt-4 max-w-[32rem] text-lg text-grafite">{texto}</p>
-      <div className="mt-6">{acao}</div>
+    <div className="border-2 border-dashed border-tinta">
+      <LinhaDeChegada className="text-tinta" />
+      <div className="flex flex-col items-start px-6 py-12 sm:px-10">
+        <IconeBandeira className="mb-5 size-12" />
+        <h2 className="titulo text-[clamp(3rem,7vw,5rem)]">{titulo}</h2>
+        <p className="mt-4 max-w-[32rem] text-lg text-grafite">{texto}</p>
+        <div className="mt-6">{acao}</div>
+      </div>
     </div>
   )
 }

@@ -103,7 +103,7 @@ describe('página de tarefas', () => {
     )
     renderizarEm('/tarefas')
 
-    await userEvent.click(await screen.findByRole('button', { name: '+ Nova tarefa' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Nova tarefa' }))
     await userEvent.type(screen.getByLabelText('Título'), 'Qualquer coisa')
     await userEvent.click(screen.getByRole('button', { name: 'Criar tarefa' }))
 
@@ -115,7 +115,7 @@ describe('página de tarefas', () => {
     const fetch = simularApi()
     renderizarEm('/tarefas')
 
-    await userEvent.click(await screen.findByRole('button', { name: '+ Nova tarefa' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Nova tarefa' }))
     await userEvent.click(screen.getByRole('button', { name: 'Criar tarefa' }))
     expect(screen.getByText('Informe o título.')).toBeInTheDocument()
     expect(chamadas(fetch, 'POST')).toHaveLength(0)

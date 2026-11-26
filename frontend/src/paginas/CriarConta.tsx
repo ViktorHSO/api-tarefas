@@ -10,7 +10,7 @@ export function CriarConta() {
   const { entrar } = useAuth()
   const navegar = useNavigate()
 
-  const [dados, setDados] = useState({ nome: '', email: '', senha: '' })
+  const [dados, setDados] = useState({ nome: '', email: '', senha: '', confirmacao: '' })
   const [errosCampos, setErrosCampos] = useState<Record<string, string>>({})
   const [erro, setErro] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
@@ -22,9 +22,13 @@ export function CriarConta() {
     evento.preventDefault()
     setErro(null)
     setErrosCampos({})
+    if (dados.senha !== dados.confirmacao) {
+      setErrosCampos({ confirmacao: 'As senhas não são iguais.' })
+      return
+    }
     setEnviando(true)
     try {
-      await cadastrar(dados)
+      await cadastrar({ nome: dados.nome, email: dados.email, senha: dados.senha })
       await entrar({ email: dados.email, senha: dados.senha })
       navegar('/tarefas', { replace: true })
     } catch (e) {
@@ -50,6 +54,15 @@ export function CriarConta() {
           onChange={alterar('senha')}
           erro={errosCampos.senha}
           dica="Pelo menos 8 caracteres."
+        />
+        <Campo
+          rotulo="Confirmar senha"
+          type="password"
+          autoComplete="new-password"
+          required
+          value={dados.confirmacao}
+          onChange={alterar('confirmacao')}
+          erro={errosCampos.confirmacao}
         />
         <Botao type="submit" disabled={enviando} className="mt-2 w-full py-4 text-lg">
           {enviando ? 'Criando conta…' : 'Criar conta'}

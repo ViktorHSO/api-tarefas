@@ -75,6 +75,14 @@ export function listarTarefas(filtro: FiltroTarefas) {
   return requisicao<Pagina<Tarefa>>(`/tarefas?${parametrosDaLista(filtro)}`)
 }
 
+/** As atrasadas com o prazo mais antigo primeiro: são as que mais pedem atenção. */
+export function listarAtrasadas(quantidade: number) {
+  const params = new URLSearchParams({ atrasadas: 'true', page: '0', size: String(quantidade) })
+  params.append('sort', 'prazo,asc')
+  params.append('sort', 'id,asc')
+  return requisicao<Pagina<Tarefa>>(`/tarefas?${params}`)
+}
+
 export function buscarResumo() {
   return requisicao<Resumo>('/tarefas/resumo')
 }

@@ -53,7 +53,8 @@
   font-stretch: 75%;
 }
 
-/* Única animação automática: as linhas do título da página inicial sobem ao carregar. */
+/* Única animação que roda sozinha: as linhas do título da página inicial sobem ao carregar.
+   (A paralaxe, no fim do arquivo, só se move junto com a rolagem.) */
 @keyframes subir-linha {
   from {
     transform: translateY(105%);
@@ -82,5 +83,32 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+  Paralaxe da página inicial: a pista e os números de peito rolam em velocidades
+  diferentes. Usa animação ligada à rolagem (CSS puro, sem JavaScript):
+  - --velocidade define quanto e em que sentido cada camada se desloca;
+  - navegadores sem suporte ficam com tudo parado, sem quebrar nada;
+  - quem pede menos movimento no sistema não vê a paralaxe.
+*/
+@keyframes paralaxe {
+  from {
+    transform: translate3d(0, calc(var(--velocidade, 0.3) * 7rem), 0);
+  }
+  to {
+    transform: translate3d(0, calc(var(--velocidade, 0.3) * -7rem), 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .paralaxe {
+      animation: paralaxe linear both;
+      animation-timeline: view();
+      animation-range: cover;
+      will-change: transform;
+    }
   }
 }

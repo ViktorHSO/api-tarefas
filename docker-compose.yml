@@ -1,4 +1,4 @@
-# Sobe o MySQL e a API: docker compose up --build
+# Sobe o MySQL, a API e o site: docker compose up --build
 # Antes, copie o .env.example para .env e preencha o JWT_SECRET.
 services:
   db:
@@ -28,6 +28,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
 
 volumes:
   dados_mysql:

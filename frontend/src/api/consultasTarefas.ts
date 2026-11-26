@@ -6,6 +6,7 @@ import {
   buscarResumo,
   criarTarefa,
   excluirTarefa,
+  listarAtrasadas,
   listarTarefas,
   type DadosTarefa,
   type FiltroTarefas,
@@ -25,6 +26,10 @@ export function useTarefas(filtro: FiltroTarefas) {
 
 export function useResumo() {
   return useQuery({ queryKey: [...CHAVE, 'resumo'], queryFn: buscarResumo })
+}
+
+export function useAtrasadas(quantidade: number) {
+  return useQuery({ queryKey: [...CHAVE, 'atrasadas', quantidade], queryFn: () => listarAtrasadas(quantidade) })
 }
 
 /** Qualquer alteração muda a lista e o resumo, então recarrega os dois. */
